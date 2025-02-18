@@ -28,12 +28,13 @@ type IB struct {
 }
 
 func NewIB(config ...*Config) *IB {
-	wrapper := NewWrapperSync()
-	c := ibapi.NewEClient(wrapper)
-	ib := &IB{eClient: c, wrapper: wrapper}
+	var cfg *Config
 	if len(config) > 0 {
-		ib.config = config[0]
+		cfg = config[0]
 	}
+	wrapper := NewWrapperSync()
+	c := ibapi.NewEClient(wrapper, cfg.BaseCtx)
+	ib := &IB{eClient: c, wrapper: wrapper, config: cfg}
 	return ib
 }
 

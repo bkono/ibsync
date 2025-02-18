@@ -1,6 +1,7 @@
 package ibsync
 
 import (
+	"context"
 	"math/rand"
 	"time"
 )
@@ -17,13 +18,14 @@ const (
 // Config holds the connection parameters for the client.
 // This struct centralizes all the configurable options for creating a connection.
 type Config struct {
-	Host     string        // Host address for the connection
-	Port     int           // Port number for the connection
-	ClientID int64         // Client ID, default is randomized for uniqueness
-	InSync   bool          // Stay in sync with server
-	Timeout  time.Duration // Timeout for the connection
-	ReadOnly bool          // Indicates if the client should be in read-only mode
-	Account  string        // Optional account identifier
+	Host     string          // Host address for the connection
+	Port     int             // Port number for the connection
+	ClientID int64           // Client ID, default is randomized for uniqueness
+	InSync   bool            // Stay in sync with server
+	Timeout  time.Duration   // Timeout for the connection
+	ReadOnly bool            // Indicates if the client should be in read-only mode
+	Account  string          // Optional account identifier
+	BaseCtx  context.Context // Base context for the connection
 }
 
 // NewConfig creates a new Config with default values, and applies any functional options.
@@ -35,6 +37,7 @@ func NewConfig(options ...func(*Config)) *Config {
 		ClientID: rand.Int63n(999999) + 1, // Random default client ID to avoid collisions. +1 for non 0 id.
 		InSync:   true,                    // Default true. Client is kept in sync with the TWS/IBG application
 		Timeout:  TIMEOUT,                 // Default timeout
+		BaseCtx:  context.Background(),    // Default base context
 	}
 
 	// Apply any functional options passed to the NewConfig function
@@ -88,5 +91,12 @@ func WithoutSync() func(*Config) {
 func WithTimeout(timeout time.Duration) func(*Config) {
 	return func(c *Config) {
 		c.Timeout = timeout
+	}
+}
+
+// WithBaseCtx is a functional option to set a custom base context for the connection.
+func WithBaseCtx(baseCtx context.Context) func(*Config) {
+	return func(c *Config) {
+		c.BaseCtx = baseCtx
 	}
 }

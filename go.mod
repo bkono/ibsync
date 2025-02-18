@@ -13,3 +13,5 @@ require (
 	github.com/robaho/fixed v0.0.0-20241016170306-9f38c2ecf100 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 )
+
+replace github.com/scmhub/ibapi => github.com/bkono/ibapi v0.0.2-0.20250218220415-7bd90b91f4a6
